@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
@@ -14,20 +15,34 @@ public class GameController : MonoBehaviour {
     public Text scoreText;
     private int score;
     public Text livesText;
-    public int lives;
+    public static int lives = 3;
 
     public Text restartText;
     public Text gameoverText;
 
-
+    private bool gameOver;
+    private bool restart;
 
     private void Start()
     {
+        gameOver = false;
+        restart = false;
+        restartText.text = "";
+        gameoverText.text = "";
         StartCoroutine(SpawnWaves());
         score = 0;
         //lives = 0;
         UpdateScore();
         UpdateLives();
+    }
+
+    private void Update()
+    {
+        if(restart){
+            if(Input.GetKeyDown(KeyCode.R)){
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+        }
     }
 
     IEnumerator SpawnWaves(){
@@ -41,6 +56,12 @@ public class GameController : MonoBehaviour {
                 yield return new WaitForSeconds(spawnWait);
             }
             yield return new WaitForSeconds(waveWait);
+
+            if(gameOver){
+                restartText.text = "Press 'R' for Restart";
+                restart = true;
+                break;
+            }
         }
     }
 
@@ -51,8 +72,15 @@ public class GameController : MonoBehaviour {
     }
 
     public void RemoveLife(int removedLives){
+        Debug.Log(lives);
         lives = lives - removedLives;
         UpdateLives();
+        if (lives == 0)
+        {
+            GameOver();
+            return;
+        }
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     void UpdateLives()
@@ -63,5 +91,11 @@ public class GameController : MonoBehaviour {
     void UpdateScore()
     {
         scoreText.text = "Score: " + score;
+    }
+
+    public void GameOver(){
+        gameoverText.text = "Game Over!";
+        gameOver = true;
+        lives = 3;
     }
 }
