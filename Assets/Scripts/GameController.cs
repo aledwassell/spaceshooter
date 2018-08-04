@@ -13,7 +13,7 @@ public class GameController : MonoBehaviour {
     public float waveWait;
 
     public Text scoreText;
-    private int score;
+    private static int score;
     public Text livesText;
     public static int lives = 3;
 
@@ -22,15 +22,17 @@ public class GameController : MonoBehaviour {
 
     private bool gameOver;
     private bool restart;
+    private bool playerDestroyed;
 
     private void Start()
     {
         gameOver = false;
         restart = false;
+        playerDestroyed = false;
         restartText.text = "";
         gameoverText.text = "";
         StartCoroutine(SpawnWaves());
-        score = 0;
+        //score = 0;
         //lives = 0;
         UpdateScore();
         UpdateLives();
@@ -41,7 +43,11 @@ public class GameController : MonoBehaviour {
         if(restart){
             if(Input.GetKeyDown(KeyCode.R)){
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                score = 0;
             }
+        }
+        if(Input.GetKey("escape")){
+            Application.Quit();
         }
     }
 
@@ -62,6 +68,11 @@ public class GameController : MonoBehaviour {
                 restart = true;
                 break;
             }
+
+            if (playerDestroyed)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
         }
     }
 
@@ -80,7 +91,7 @@ public class GameController : MonoBehaviour {
             GameOver();
             return;
         }
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        playerDestroyed = true;
     }
 
     void UpdateLives()
