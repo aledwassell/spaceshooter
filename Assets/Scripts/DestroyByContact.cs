@@ -23,10 +23,12 @@ public class DestroyByContact : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Boundry"){
+        if(other.tag == "Boundry" || other.tag == "Enemy"){
             return;
         }
-        Instantiate(explosion, transform.position, transform.rotation);
+        if(explosion != null){
+            Instantiate(explosion, transform.position, transform.rotation);
+        }
         if(other.tag == "Player") {
             Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
             gameController.RemoveLife(livesValue);
